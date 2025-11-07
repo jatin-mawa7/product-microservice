@@ -30,6 +30,11 @@ public class ProductService {
                 .orElse(null);
     }
 
+    public boolean checkAvailabilityForQuantity(Long id, Integer quantity) {
+        return productRepository.findById(id).map(p -> p.getQuantity() >= quantity).orElse(false);
+    }
+
+
     public boolean checkAvailability(Long id) {
         Product product = productRepository.findById(id).orElse(null);
         return product != null && product.getQuantity() > 0;
@@ -39,6 +44,18 @@ public class ProductService {
         Product product = productRepository.findById(id).orElse(null);
         return (product != null) ? product.getPrice() : 0.0;
     }
+    // reduce stock; returns true if reduced, false if insufficient or product not found
+    public boolean reduceStock(Long id, Integer quantity) {
+        return productRepository.findById(id).map(product -> {
+            if (product.getQuantity() >= quantity) {
+                product.setQuantity(product.getQuantity() - quantity);
+                productRepository.save(product);
+                return true;
+            }
+            return false;
+        }).orElse(false);
+    }
+
 
     public ProductDto addProduct(ProductDto dto) {
         Product product = new Product(); // use no-arg constructor
@@ -53,13 +70,13 @@ public class ProductService {
         return convertToDto(saved);
     }
 
-    public void reduceStock(Long id, int quantity) {
-        Product product = productRepository.findById(id).orElse(null);
-        if (product != null && product.getQuantity() >= quantity) {
-            product.setQuantity(product.getQuantity() - quantity);
-            productRepository.save(product);
-        }
-    }
+//    public void reduceStock(Long id, int quantity) {
+//        Product product = productRepository.findById(id).orElse(null);
+//        if (product != null && product.getQuantity() >= quantity) {
+//            product.setQuantity(product.getQuantity() - quantity);
+//            productRepository.save(product);
+//        }
+//    }
 
     private ProductDto convertToDto(Product product) {
         ProductDto dto = new ProductDto();

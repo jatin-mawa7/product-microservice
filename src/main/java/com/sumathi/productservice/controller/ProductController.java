@@ -34,6 +34,11 @@ public class ProductController {
     public ResponseEntity<Boolean> checkAvailability(@PathVariable Long id) {
         return ResponseEntity.ok(productService.checkAvailability(id));
     }
+    // check availability for requested quantity
+    @GetMapping("/check/{id}/{quantity}")
+    public ResponseEntity<Boolean> checkAvailability(@PathVariable Long id, @PathVariable Integer quantity) {
+        return ResponseEntity.ok(productService.checkAvailabilityForQuantity(id, quantity));
+    }
 
 
     @GetMapping("/price/{id}")
@@ -45,6 +50,15 @@ public class ProductController {
     public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDTO) {
         return ResponseEntity.ok(productService.addProduct(productDTO));
     }
+
+    // reduce stock after successful payment
+    @PutMapping("/reduce/{id}/{quantity}")
+    public ResponseEntity<Void> reduceStock(@PathVariable Long id, @PathVariable Integer quantity) {
+        boolean ok = productService.reduceStock(id, quantity);
+        if (!ok) return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok().build();
+    }
+
 }
 
 
