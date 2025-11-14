@@ -2,6 +2,7 @@ package com.sumathi.productservice.controller;
 
 import com.sumathi.productservice.model.ProductDto;
 import com.sumathi.productservice.service.ProductService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +19,7 @@ public class ProductController {
     public ProductController(ProductService productService) {
         this.productService = productService;
     }
+
     @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
@@ -29,18 +31,19 @@ public class ProductController {
         return (product != null) ? ResponseEntity.ok(product) : ResponseEntity.notFound().build();
     }
 
-
+    @Hidden
     @GetMapping("/check/{id}")
     public ResponseEntity<Boolean> checkAvailability(@PathVariable Long id) {
         return ResponseEntity.ok(productService.checkAvailability(id));
     }
+    @Hidden
     // check availability for requested quantity
     @GetMapping("/check/{id}/{quantity}")
     public ResponseEntity<Boolean> checkAvailability(@PathVariable Long id, @PathVariable Integer quantity) {
         return ResponseEntity.ok(productService.checkAvailabilityForQuantity(id, quantity));
     }
 
-
+    @Hidden
     @GetMapping("/price/{id}")
     public ResponseEntity<Double> getPrice(@PathVariable Long id) {
         return ResponseEntity.ok(productService.getPrice(id));
